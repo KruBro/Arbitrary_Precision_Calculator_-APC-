@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 
 typedef int data_t;
@@ -20,6 +22,9 @@ int insert_at_first(Dlist **head, data_t data);
 int insert_at_last(Dlist **head, Dlist **tail, data_t data);
 void print_list(Dlist *head);
 void free_list(Dlist **head);
+// void swap(char **argv, int i, int j);
+int isNegative(char **argv, int i, int j);
+int compare(int len1, int len2, Dlist *head1, Dlist *head2);
 int addition(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist **headR);
 int subtraction(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist **headR);
 int multiplication(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist **headR);
