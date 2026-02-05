@@ -16,6 +16,10 @@ typedef struct node
 }Dlist;
 
 /* Include the prototypes here */
+int insert_at_first(Dlist **head, data_t data);
+int insert_at_last(Dlist **head, Dlist **tail, data_t data);
+void print_list(Dlist *head);
+void free_list(Dlist **head);
 int addition(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist **headR);
 int subtraction(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist **headR);
 int multiplication(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist **headR);

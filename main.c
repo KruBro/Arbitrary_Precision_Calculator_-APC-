@@ -4,31 +4,7 @@
 ***************************************************************************************************************************************************************/
 #include "apc.h"
 
-int insert_at_last(Dlist **head, Dlist **tail, data_t data)
-{
-	//Dynamic Memory allocation for new node
-	Dlist *new = malloc(sizeof(Dlist));
-	if(new == NULL)	return FAILURE; //Safety Check;
-
-	new->data = data;
-	new->prev = NULL;
-	new->next = NULL;
-
-	//if the list is Empty
-	if(!(*head) && !(*tail))
-	{
-		*head = *tail = new;
-		return SUCCESS;
-	}
-	
-	//If not Empty
-	(*tail)->next = new; 
-	new->prev = *tail;
-	*tail = new;
-	return SUCCESS;
-}
-
-void print_list(Dlist *head, Dlist *tail)
+void print_list(Dlist *head)
 {
 	if(head == NULL)
 		printf("[INFO]: List is Empty\n");
@@ -36,10 +12,11 @@ void print_list(Dlist *head, Dlist *tail)
 	{
 		while(head)
 		{
-			printf("%d ", head->data);
+			printf("%d", head->data);
 			head = head->next;
 		}
 	}
+    printf(" ");
 }
 
 
@@ -56,6 +33,7 @@ int main(int argc, char *argv[])
        but good practice to set NULL here too */
     Dlist *head1 = NULL, *tail1 = NULL; 
     Dlist *head2 = NULL, *tail2 = NULL;
+    Dlist *headR = NULL;
     char option, operator;
 
     do
@@ -63,7 +41,7 @@ int main(int argc, char *argv[])
         /* IMPORTANT: Reset pointers for every retry loop */
         head1 = tail1 = NULL;
         head2 = tail2 = NULL;
-
+        headR = NULL;
         // --- Operand 1 Parsing ---
         // Iterate through the string character by character
         for (int i = 0; argv[1][i] != '\0'; i++)
@@ -83,17 +61,17 @@ int main(int argc, char *argv[])
             insert_at_last(&head2, &tail2, num);
         }
 
-        printf("List 1: ");
-        print_list(head1, tail1);
-        printf("\nOperator: %c\n", operator);
-        printf("List 2: ");
-        print_list(head2, tail2);
-        printf("\n");
+        print_list(head1);
+        printf("%c ", operator);
+        print_list(head2);
 
         switch (operator)
         {
             case '+':
-                // dl_add(head1, tail1, head2, tail2, &headR);
+                addition(&head1, &tail1, &head2, &tail2, &headR);
+                printf("= ");
+                print_list(headR);
+                printf("\n");
                 break;
             case '-':   
                 // dl_sub(...);
@@ -108,11 +86,12 @@ int main(int argc, char *argv[])
                 printf("Invalid Operator\n");
         }
 
-        printf("Want to continue? Press [yY]: ");
+        free_list(&head1);
+        free_list(&head2);
+        free_list(&headR);
+
+        printf("Want to Re-check the calculation ? Press [yY]: ");
         scanf("\n%c", &option);
-        
-        // Note: Since you use argv inside the loop, continuing will 
-        // just recalculate the same command line arguments again.
         
     } while (option == 'y' || option == 'Y');
 
