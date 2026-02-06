@@ -11,7 +11,7 @@ int compare(int len1, int len2, Dlist *head1, Dlist *head2)
 {
     // Check length first - this is non-negotiable for math!
     if (len1 > len2) return 1;
-    if (len1 < len2) return 0;
+    if (len1 < len2) return 2;
 
     // If lengths are identical, find the first digit that differs
     while (head1 != NULL)
@@ -20,7 +20,7 @@ int compare(int len1, int len2, Dlist *head1, Dlist *head2)
             return 1;
         
         if (head1->data < head2->data)
-            return 0;
+            return 2;
 
         head1 = head1->next;
         head2 = head2->next;
@@ -28,4 +28,15 @@ int compare(int len1, int len2, Dlist *head1, Dlist *head2)
 
     // If they are equal, return 0 (doesn't matter which is first)
     return 0;
+}
+
+void remove_tailing_zeros(Dlist **head)
+{
+    //If Zero is not only element, remove the zeros;
+    while((*head)->data == 0 && (*head)->next != NULL)
+    {
+        Dlist *temp = *head;
+        *head = temp->next;
+        free(temp);
+    }
 }

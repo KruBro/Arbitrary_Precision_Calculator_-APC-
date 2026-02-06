@@ -42,6 +42,7 @@ int addition(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlist *
         if (temp2) temp2 = temp2->prev;
     }
 
+    remove_tailing_zeros(headR);
     return SUCCESS;
 }
 
