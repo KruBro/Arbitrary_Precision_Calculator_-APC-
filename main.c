@@ -198,7 +198,12 @@ int main(int argc, char *argv[])
                 break;
 
             case 'x':   
-                // dl_mul(...);
+                printf("= ");
+                if(isOp1Negative != isOp2Negative)
+                    printf("-");
+                multiplication(&head1, &tail1, &head2, &tail2, &headR);
+                print_list(headR);
+                printf("\n");
                 break;
             case '/':   
                 // dl_div(...);

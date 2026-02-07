@@ -45,7 +45,8 @@ int subtraction(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2, Dlis
         if (temp2) temp2 = temp2->prev;
     }
 
-    remove_tailing_zeros(headR);
+    if(*headR != NULL)
+        remove_tailing_zeros(headR);
     return SUCCESS;
 }
 
