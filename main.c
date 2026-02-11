@@ -1,228 +1,189 @@
-/**************************************************************************************************************************************************************
-*Title		: main function(Driver function)
-*Description	: This function is used as the driver function for the all the functions
-***************************************************************************************************************************************************************/
+/*******************************************************************************************************************************************************************
+ * File Name     : main.c
+ * Description   : Main driver function for Arbitrary Precision Calculator
+ *                 Supports addition, subtraction, multiplication, and division of large numbers with decimals
+ * Author        : [Your Name]
+ * Date          : [Date]
+ *******************************************************************************************************************************************************************/
+
 #include "apc.h"
 
-// int compare(*head, *tail);
-
+/**
+ * Print a linked list representing a number
+ */
 void print_list(Dlist *head)
 {
-	if(head == NULL)
-		printf("[INFO]: List is Empty\n");
-	else
-	{
-		while(head)
-		{
-			printf("%d", head->data);
-			head = head->next;
-		}
-	}
-    printf(" ");
-}
-
-// Accept Dlist ** (pointer to pointer) to modify the caller's variables
-void swap(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2)
-{
-    Dlist *temp1 = *head1;
-    *head1 = *head2;
-    *head2 = temp1;
-
-    Dlist *temp2 = *tail1;
-    *tail1 = *tail2;
-    *tail2 = temp2;
-}
-
-int main(int argc, char *argv[])
-{
-    /* SAFETY CHECK: Ensure arguments exist before accessing them */
-    if (argc < 4)
+    if (head == NULL)
     {
-        printf("Usage: ./a.out <num1> <operator> <num2>\n");
-        return 1;
+        printf("0");
+        return;
     }
-
-    /* Declare pointers - Initialization happens inside the loop if reusing, 
-       but good practice to set NULL here too */
-    Dlist *head1 = NULL, *tail1 = NULL; 
-    Dlist *head2 = NULL, *tail2 = NULL;
-    Dlist *headR = NULL;
-    char option, operator;
-
-    do
+    
+    while (head != NULL)
     {
-        /* IMPORTANT: Reset pointers for every retry loop */
-        head1 = tail1 = NULL;
-        head2 = tail2 = NULL;
-        headR = NULL;
-
-        int digit_count_operand_1 = strlen(argv[1]);
-        int digit_count_operand_2 = strlen(argv[3]);
-
-        int isOp1Negative = 0;
-        int isOp2Negative = 0;
-        int isBothNegative = 0;
-
-        int op1Bigger = 0;
-        int op2Bigger = 0;
-        int isBothEqual = 0;
-
-        // int digit_count_operand_1 = 0;
-        // int digit_count_operand_2 = 0;
-        // --- Operand 1 Parsing ---
-        // Iterate through the string character by character
-
-        int i = 0;
-        
-        //if it is negative number, skip the first character
-        if(isNegative(argv, 1, i))
+        if (head->data == '.')
         {
-            i = 1;
-            isOp1Negative = 1;
-            digit_count_operand_1--;
-        }
-
-        parse_operands(argv, 1, i, &head1, &tail1);
-
-        // --- Operator ---
-        operator = argv[2][0];
-
-        // --- Operand 2 Parsing ---
-        int j = 0;
-
-        //if it is negative number, skip the first character
-        if(isNegative(argv, 3, j))
-        {
-            j = 1;
-            isOp2Negative = 1;
-            digit_count_operand_2--;
-        }
-
-        parse_operands(argv, 3, j, &head2, &tail2);
-
-        //Check if Both Operand Negative
-        if(isOp1Negative == 1 && isOp2Negative == 1)
-            isBothNegative = 1;
-
-        //Check which operand is bigger
-        if(compare(digit_count_operand_1, digit_count_operand_2, head1, head2) == 1)
-        {
-            op1Bigger = 1;
-            op2Bigger = 0;
-        }
-        else if(compare(digit_count_operand_1, digit_count_operand_2, head1, head2) == 2)
-        {
-            op1Bigger = 0;
-            op2Bigger = 1;
+            printf(".");
         }
         else
         {
-            isBothEqual = 1;
+            printf("%d", head->data);
         }
-        
+        head = head->next;
+    }
+}
 
-        switch (operator)
+/**
+ * Swap two doubly linked lists
+ */
+void swap(Dlist **head1, Dlist **tail1, Dlist **head2, Dlist **tail2)
+{
+    Dlist *temp_head = *head1;
+    *head1 = *head2;
+    *head2 = temp_head;
+
+    Dlist *temp_tail = *tail1;
+    *tail1 = *tail2;
+    *tail2 = temp_tail;
+}
+
+/**
+ * Main function
+ */
+int main(int argc, char *argv[])
+{
+    char *operand1_str = NULL;
+    char *operand2_str = NULL;
+    char operator = '\0';
+    char retry_option;
+
+    /* Parse and validate arguments (only once, not in retry loop) */
+    if (parse_arguments(argc, argv, &operand1_str, &operand2_str, &operator) == FAILURE)
+    {
+        return EXIT_FAILURE;
+    }
+
+    do
+    {
+        /* Initialize list pointers */
+        Dlist *head1 = NULL, *tail1 = NULL; 
+        Dlist *head2 = NULL, *tail2 = NULL;
+        Dlist *headR = NULL, *tailR = NULL;
+
+        /* Flags for operand properties */
+        int is_op1_negative = FALSE;
+        int is_op2_negative = FALSE;
+        int op1_bigger = FALSE;
+        int op2_bigger = FALSE;
+        int is_both_equal = FALSE;
+
+        /* Parse first operand */
+        int start_index = 0;
+        
+        if (is_negative(argv, 1, 0))
         {
-            case '+':
-                printf("= ");
-
-                // Scenario 1: Different Signs (One is + and the other is -)
-                // Rule: Subtract smaller absolute value from larger, sign follows the "larger" number.
-                if (isOp1Negative != isOp2Negative) 
-                {
-                    if (op2Bigger) 
-                    {
-                        swap(&head1, &tail1, &head2, &tail2);
-                        // If the original Op2 was negative and was bigger, result is negative
-                        if (isOp2Negative) printf("-");
-                    }
-                    else if (op1Bigger)
-                    {
-                        // If the original Op1 was negative and was bigger, result is negative
-                        if (isOp1Negative) printf("-");
-                    }
+            start_index = 1;
+            is_op1_negative = TRUE;
+        }
         
-                    subtraction(&head1, &tail1, &head2, &tail2, &headR);
-                }       
-                // Scenario 2: Same Signs (Both + or Both -)
-                // Rule: Add values normally. If both were negative, result is negative.
-                else 
-                {   
-                    if (isBothNegative && !isBothEqual) printf("-"); 
+        parse_operands(argv, 1, start_index, &head1, &tail1);
         
-                    addition(&head1, &tail1, &head2, &tail2, &headR);
-                }
+        /* Count decimal places and digits in first operand */
+        int decimal1 = count_decimal_places(head1);
+        int digit_count1 = 0;
+        Dlist *temp = head1;
+        while (temp != NULL)
+        {
+            if (temp->data != '.')
+            {
+                digit_count1++;
+            }
+            temp = temp->next;
+        }
+        digit_count1 -= decimal1;  /* Exclude decimal places from integer count */
 
-                print_list(headR);
-                printf("\n");
-                break;
+        /* Parse second operand */
+        start_index = 0;
+        
+        if (is_negative(argv, 3, 0))
+        {
+            start_index = 1;
+            is_op2_negative = TRUE;
+        }
+        
+        parse_operands(argv, 3, start_index, &head2, &tail2);
+        
+        /* Count decimal places and digits in second operand */
+        int decimal2 = count_decimal_places(head2);
+        int digit_count2 = 0;
+        temp = head2;
+        while (temp != NULL)
+        {
+            if (temp->data != '.')
+            {
+                digit_count2++;
+            }
+            temp = temp->next;
+        }
+        digit_count2 -= decimal2;  /* Exclude decimal places from integer count */
 
-                
-            case '-':
-                printf("= ");
-    
-                // 1. Determine if we are doing ADDITION or SUBTRACTION
-                // If signs are different (e.g., 5 - (-3) or -5 - 3), it's actually ADDITION
-                if (isOp1Negative != isOp2Negative) 
-                {
-                    addition(&head1, &tail1, &head2, &tail2, &headR);
-                    // If the first number was negative, the result is always negative: -5 - 3 = -(5+3)
-                    if (isOp1Negative) printf("-");
-                }
-                // 2. If signs are the same (e.g., 10 - 4 or -10 - (-4)), it's SUBTRACTION
-                else 
-                {
-                    // Always subtract smaller from larger
-                    if (op2Bigger) 
-                    {
-                    swap(&head1, &tail1, &head2, &tail2);
-                    subtraction(&head1, &tail1, &head2, &tail2, &headR);
-            
-                    // Sign logic: 
-                    // If both (+): 4 - 10 = -6 (result is negative)
-                    // If both (-): -4 - (-10) = +6 (result is positive)
-                    if (!isBothNegative) printf("-");
-                    } 
-                    else 
-                    {
-                        subtraction(&head1, &tail1, &head2, &tail2, &headR);
-            
-                         // Sign logic:
-                        // If both (-): -10 - (-4) = -6 (result is negative)
-                        if (isBothNegative && !isBothEqual) printf("-");
-                    }
-                }
-
-                print_list(headR);
-                printf("\n");
-                break;
-
-            case 'x':   
-                printf("= ");
-                if(isOp1Negative != isOp2Negative)
-                    printf("-");
-                multiplication(&head1, &tail1, &head2, &tail2, &headR);
-                print_list(headR);
-                printf("\n");
-                break;
-            case '/':   
-                // dl_div(...);
-                break;
-            default:
-                printf("Invalid Operator\n");
+        /* Compare operands (ignoring signs and decimals for magnitude comparison) */
+        Dlist *head1_copy = head1;
+        Dlist *head2_copy = head2;
+        
+        /* Skip to first non-decimal digit for comparison */
+        while (head1_copy != NULL && head1_copy->data == '.')
+        {
+            head1_copy = head1_copy->next;
+        }
+        while (head2_copy != NULL && head2_copy->data == '.')
+        {
+            head2_copy = head2_copy->next;
+        }
+        
+        ComparisonResult comparison = compare(digit_count1, digit_count2, head1_copy, head2_copy);
+        
+        if (comparison == FIRST_LARGER)
+        {
+            op1_bigger = TRUE;
+        }
+        else if (comparison == SECOND_LARGER)
+        {
+            op2_bigger = TRUE;
+        }
+        else
+        {
+            is_both_equal = TRUE;
         }
 
-        printf("Total Digits of Operand 1 : %d\n", digit_count_operand_1);
-        printf("Total Digits of Operand 2 : %d\n", digit_count_operand_2);
+        /* Perform the operation */
+        int result = perform_operation(&head1, &tail1, &head2, &tail2, &headR, &tailR,
+                                       operator, is_op1_negative, is_op2_negative,
+                                       op1_bigger, op2_bigger, is_both_equal,
+                                       decimal1, decimal2);
 
+        /* Display result */
+        if (result == SUCCESS)
+        {
+            print_list(headR);
+            printf("\n");
+        }
+        else
+        {
+            fprintf(stderr, "[ERROR]: Operation failed\n");
+        }
+
+        /* Clean up memory */
         free_list(&head1);
         free_list(&head2);
         free_list(&headR);
 
-        printf("Want to Re-check the calculation ? Press [yY]: ");
-        scanf("\n%c", &option);
+        /* Ask user if they want to retry */
+        printf("\nWant to perform another calculation? Press [yY]: ");
+        scanf(" %c", &retry_option);
         
-    } while (option == 'y' || option == 'Y');
+    } while (retry_option == 'y' || retry_option == 'Y');
 
-    return 0;
+    printf("Thank you for using the calculator!\n");
+    return EXIT_SUCCESS;
 }
