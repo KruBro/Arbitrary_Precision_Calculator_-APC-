@@ -310,12 +310,15 @@ When adding new features:
 
 ## Authors
 
-```
-Author       : Shahad K
-Website      : https://portfolio-murex-delta-39.vercel.app/
-Github       : https://github.com/KruBro
-Project Repo : https://github.com/KruBro/Arbitrary_Precision_Calculator_-APC-.git 
-```
+
+**Author**       : **Shahad K**
+
+
+**Website**      : **https://portfolio-murex-delta-39.vercel.app/**
+
+**Github**       : **https://github.com/KruBro**
+
+**Project Repo** : **https://github.com/KruBro/Arbitrary_Precision_Calculator_-APC-.git** 
 
 ## Acknowledgments
 
