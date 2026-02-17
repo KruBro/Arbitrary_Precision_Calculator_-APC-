@@ -53,7 +53,7 @@ test: $(TARGET)
 	@echo "\nTesting multiplication: 12.5 x 4.2"
 	./$(TARGET) 12.5 x 4.2
 	@echo "\nTesting Division: 1.5 / 0.5"
-	/.$(TARGET) 1.5 / 0.5
+	./$(TARGET) 1.5 / 0.5
 
 # Help target
 help:
